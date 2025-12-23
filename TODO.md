@@ -1,5 +1,5 @@
-# User Register API Implementation
+# TODO: Add Serial No. and Image Column to Users Index Page
 
--   [x] Create routes/api.php for API routes
--   [x] Create app/Http/Controllers/Api/UserController.php with register method
--   [x] Add registration route in routes/api.php
+-   [ ] Add "Serial No." and "Image" headers to the table in resources/views/admin/users/index.blade.php
+-   [ ] Add Serial No. and Image cells to each user row in the table body
+-   [ ] Update the colspan in the empty state message from 6 to 8
