@@ -161,6 +161,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:100',
             'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:6|confirmed',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -180,6 +181,10 @@ class UserController extends Controller
 
         if ($request->has('email')) {
             $updateData['email'] = $request->email;
+        }
+
+        if ($request->has('password')) {
+            $updateData['password'] = Hash::make($request->password);
         }
 
         if ($request->hasFile('profile_image')) {
