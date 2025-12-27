@@ -132,6 +132,13 @@ class UserController extends Controller
     {
         $user = $request->user();
 
+        // Add full path to profile image if it exists
+        if ($user->profile_image) {
+            $user->profile_image_url = asset('storage/' . $user->profile_image);
+        } else {
+            $user->profile_image_url = asset('images/default-avatar.png');
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Profile retrieved successfully',
