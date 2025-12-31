@@ -148,6 +148,9 @@ class UserController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'profile_image_url' => $user->profile_image_url,
+                'location' => $user->location,
+                'description' => $user->description,
+                'cover_image_url' => $user->cover_image_url,
                 'is_verified' => $user->is_verified,
                 'is_active' => $user->is_active,
                 'is_online' => $user->is_online,
@@ -198,6 +201,20 @@ class UserController extends Controller
             // Handle profile image upload
             $imagePath = $request->file('profile_image')->store('profiles', 'public');
             $updateData['profile_image'] = $imagePath;
+        }
+
+        if ($request->has('location')) {
+            $updateData['location'] = $request->location;
+        }
+
+        if ($request->has('description')) {
+            $updateData['description'] = $request->description;
+        }
+
+        if ($request->hasFile('cover_image')) {
+            // Handle cover image upload
+            $coverImagePath = $request->file('cover_image')->store('covers', 'public');
+            $updateData['cover_image'] = $coverImagePath;
         }
 
         $user->update($updateData);

@@ -108,6 +108,18 @@ class User extends Authenticatable
     }
 
     /**
+     * Get full cover image URL
+     */
+    public function getCoverImageUrlAttribute()
+    {
+        if ($this->cover_image) {
+            return asset('storage/' . $this->cover_image);
+        }
+
+        return null;
+    }
+
+    /**
      * Check if user is available for tasks
      */
     public function getIsAvailableAttribute(): bool

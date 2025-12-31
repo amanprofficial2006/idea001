@@ -37,8 +37,11 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
             'password' => 'required|string|min:8|confirmed',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'is_active' => 'nullable|boolean',
             'is_blocked' => 'nullable|boolean',
             'blocked_reason' => 'nullable|string|max:255',
@@ -48,6 +51,8 @@ class UserController extends Controller
             'name',
             'email',
             'phone',
+            'location',
+            'description',
             'is_active',
             'is_blocked',
             'blocked_reason'
@@ -59,6 +64,10 @@ class UserController extends Controller
 
         if ($request->hasFile('profile_image')) {
             $data['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+        }
+
+        if ($request->hasFile('cover_image')) {
+            $data['cover_image'] = $request->file('cover_image')->store('cover_images', 'public');
         }
 
         User::create($data);
@@ -102,6 +111,8 @@ class UserController extends Controller
             'name',
             'email',
             'phone',
+            'location',
+            'description',
             'is_active',
             'is_blocked',
             'blocked_reason'
@@ -120,6 +131,14 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->profile_image);
             }
             $data['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+        }
+
+        if ($request->hasFile('cover_image')) {
+            // Delete old cover image
+            if ($user->cover_image) {
+                Storage::disk('public')->delete($user->cover_image);
+            }
+            $data['cover_image'] = $request->file('cover_image')->store('cover_images', 'public');
         }
 
         $user->update($data);

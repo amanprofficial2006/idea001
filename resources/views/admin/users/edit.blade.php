@@ -44,6 +44,18 @@
 		</div>
 
 		<div class="mb-4">
+			<label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+			<input type="text" name="location" id="location" value="{{ old("location", $user->location) }}"
+				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+		</div>
+
+		<div class="mb-4">
+			<label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+			<textarea name="description" id="description" rows="4"
+			 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old("description", $user->description) }}</textarea>
+		</div>
+
+		<div class="mb-4">
 			<label for="password" class="block text-sm font-medium text-gray-700">Password (leave blank to keep current)</label>
 			<input type="password" name="password" id="password"
 				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -61,6 +73,15 @@
 				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
 			@if ($user->profile_image)
 				<img src="{{ $user->profile_image_url }}" alt="Profile Image" class="mt-2 h-20 w-20 rounded-full object-cover">
+			@endif
+		</div>
+
+		<div class="mb-4">
+			<label for="cover_image" class="block text-sm font-medium text-gray-700">Cover Image</label>
+			<input type="file" name="cover_image" id="cover_image"
+				class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+			@if ($user->cover_image_url)
+				<img src="{{ $user->cover_image_url }}" alt="Cover Image" class="mt-2 h-32 w-full rounded object-cover">
 			@endif
 		</div>
 
