@@ -126,18 +126,6 @@ class TaskController extends Controller
             ]);
 
             // ---------------------------
-            // 4. SAVE SKILLS
-            // ---------------------------
-            if (!empty($validated['skills'])) {
-                foreach ($validated['skills'] as $skill) {
-                    TaskSkill::create([
-                        'task_id' => $task->id,
-                        'skill' => $skill
-                    ]);
-                }
-            }
-
-            // ---------------------------
             // 5. SAVE IMAGES
             // ---------------------------
             if ($request->hasFile('images')) {
