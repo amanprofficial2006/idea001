@@ -126,6 +126,22 @@ class TaskController extends Controller
             ]);
 
             // ---------------------------
+            // 4. SAVE SKILLS (SAFE + SINGLE)
+            // ---------------------------
+            if ($request->has('skills') && is_array($validated['skills']) && count($validated['skills']) > 0) {
+
+                foreach ($validated['skills'] as $skill) {
+
+                    if (!empty($skill)) {
+                        TaskSkill::create([
+                            'task_id' => $task->id,
+                            'skill' => $skill
+                        ]);
+                    }
+                }
+            }
+
+            // ---------------------------
             // 5. SAVE IMAGES
             // ---------------------------
             if ($request->hasFile('images')) {
@@ -137,18 +153,6 @@ class TaskController extends Controller
                         'task_id' => $task->id,
                         'image' => $path
                     ]);
-                }
-            }
-            // SAVE SKILLS (safe handling)
-            if ($request->has('skills') && is_array($validated['skills']) && count($validated['skills']) > 0) {
-                foreach ($validated['skills'] as $skill) {
-
-                    if (!empty($skill)) { // ensures no empty inserts
-                        TaskSkill::create([
-                            'task_id' => $task->id,
-                            'skill' => $skill
-                        ]);
-                    }
                 }
             }
 
