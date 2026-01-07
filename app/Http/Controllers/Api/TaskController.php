@@ -151,6 +151,18 @@ class TaskController extends Controller
                     ]);
                 }
             }
+            // SAVE SKILLS (safe handling)
+            if ($request->has('skills') && is_array($validated['skills']) && count($validated['skills']) > 0) {
+                foreach ($validated['skills'] as $skill) {
+
+                    if (!empty($skill)) { // ensures no empty inserts
+                        TaskSkill::create([
+                            'task_id' => $task->id,
+                            'skill' => $skill
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
 
