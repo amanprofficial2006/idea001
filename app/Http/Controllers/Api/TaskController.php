@@ -31,7 +31,7 @@ class TaskController extends Controller
 
             'urgency_level' => 'required|in:urgent,today,tomorrow,week,custom',
 
-            'duration' => 'nullable|required_if:urgency_level,urgent|integer|min:5',
+            'duration' => 'nullable',
 
             'deadline' => 'nullable|required_if:urgency_level,custom|date',
 
