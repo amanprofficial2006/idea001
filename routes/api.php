@@ -37,7 +37,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/organisation', [OrganisationController::class, 'index']);
 
 // Categories
-Route::apiResource('categories', CategoryController::class);
-
-// Subcategories
-Route::apiResource('subcategories', SubCategoryController::class);
+Route::get('categories/index', [CategoryController::class, 'index']);

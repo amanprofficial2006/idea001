@@ -13,17 +13,14 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $categories = Category::withCount('subcategories')
-                ->select('id', 'name', 'image', 'is_active')
+            $categories = Category::select('id', 'name', 'image', 'is_active')
                 ->where('is_active', 1)
-                ->orderBy('name', 'ASC')
+                ->orderBy('id', 'ASC')
                 ->get();
 
-            // Add full image URL
-            $categories->transform(function ($cat) {
+            foreach ($categories as $cat) {
                 $cat->image_url = $cat->image ? asset('storage/' . $cat->image) : null;
-                return $cat;
-            });
+            }
 
             return response()->json([
                 'status' => true,
@@ -38,6 +35,7 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+
 
 
     public function store(Request $request)
