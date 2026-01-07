@@ -10,28 +10,35 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $categories = Category::where('is_active', true)->get();
+        try {
+            $categories = Category::withCount('subcategories')
+                ->select('id', 'name', 'image', 'is_active')
+                ->where('is_active', 1)
+                ->orderBy('name', 'ASC')
+                ->get();
 
-        $data = $categories->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'image_url' => $category->image_url,
-                'is_active' => $category->is_active,
-                'created_at' => $category->created_at,
-                'updated_at' => $category->updated_at,
-            ];
-        });
+            // Add full image URL
+            $categories->transform(function ($cat) {
+                $cat->image_url = $cat->image ? asset('storage/' . $cat->image) : null;
+                return $cat;
+            });
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Categories retrieved successfully',
-            'data' => $data,
-        ], 200);
+            return response()->json([
+                'status' => true,
+                'message' => 'Categories fetched successfully',
+                'data' => $categories
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function store(Request $request)
     {
