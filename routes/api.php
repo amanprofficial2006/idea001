@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\OrganisationController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubCategoryController;
+use App\Http\Controllers\Api\TaskController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'getProfile']);
     Route::post('/profile', [UserController::class, 'updateProfile']);
     Route::post('/toggle-online', [UserController::class, 'toggleOnlineStatus']);
+    Route::post('/tasks', [TaskController::class, 'store']);
 });
 
 Route::get('/organisation', [OrganisationController::class, 'index']);
