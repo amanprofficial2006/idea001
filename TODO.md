@@ -1,5 +1,29 @@
-# TODO: Implement User Online/Offline Toggle API
+# TODO: Add Description to Category and SubCategory CRUD
 
--   [x] Add `toggleOnlineStatus` method to `app/Http/Controllers/Api/UserController.php`
--   [x] Add route for toggle-online in `routes/api.php`
--   [x] Test the API endpoint (route registered successfully)
+## Migrations
+
+-   [ ] Update migration for categories: add description column
+-   [ ] Update migration for sub_categories: add description column
+
+## Models
+
+-   [ ] Update Category model: add 'description' to fillable
+-   [ ] Update SubCategory model: ensure 'description' is in fillable (already there)
+
+## Controllers
+
+-   [ ] Update Admin/CategoryController: add description to validation and data handling
+-   [ ] Update Admin/SubCategoryController: add description to validation and data handling
+
+## Views - Category
+
+-   [ ] Update categories/create.blade.php: add description textarea
+-   [ ] Update categories/edit.blade.php: add description textarea
+-   [ ] Update categories/index.blade.php: display description column
+-   [ ] Update categories/show.blade.php: display description
+
+## Views - SubCategory
+
+-   [ ] Update subcategories/create.blade.php: add description textarea
+-   [ ] Update subcategories/edit.blade.php: add description textarea
+-   [ ] Update subcategories/index.blade.php: display description column
