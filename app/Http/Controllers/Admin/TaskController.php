@@ -70,7 +70,7 @@ class TaskController extends Controller
             'budget_type' => 'required|in:fixed,hourly',
             'amount' => 'required|numeric|min:1',
             'urgency_level' => 'required|in:urgent,today,tomorrow,week,custom',
-            'duration' => 'nullable|required_if:urgency_level,urgent|integer|min:5',
+            'duration' => 'nullable',
             'deadline' => 'nullable|required_if:urgency_level,custom|date',
             'location' => 'required|string|max:255',
             'address' => 'nullable|string',
