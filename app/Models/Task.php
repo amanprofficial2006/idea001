@@ -16,7 +16,7 @@ class Task extends Model
         'budget_type',
         'amount',
         'urgency_level',
-        'help_needed_within',
+        'duration',
         'deadline',
         'location',
         'address',

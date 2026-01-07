@@ -42,6 +42,12 @@
 						<label class="block text-sm font-medium text-gray-700">Urgency Level</label>
 						<p class="mt-1 text-sm text-gray-900">{{ ucfirst($task->urgency_level) }}</p>
 					</div>
+					@if ($task->duration)
+						<div>
+							<label class="block text-sm font-medium text-gray-700">Duration</label>
+							<p class="mt-1 text-sm text-gray-900">{{ $task->duration }} minutes</p>
+						</div>
+					@endif
 					@if ($task->deadline)
 						<div>
 							<label class="block text-sm font-medium text-gray-700">Deadline</label>

@@ -62,6 +62,7 @@
 								@endif
 							</td>
 							<td class="border border-gray-300 px-4 py-2">{{ ucfirst($task->urgency_level) }}</td>
+							<td class="border border-gray-300 px-4 py-2">{{ $task->duration ? $task->duration . " min" : "N/A" }}</td>
 							<td class="border border-gray-300 px-4 py-2">
 								<a href="{{ route("admin.tasks.show", $task) }}" class="text-blue-600 hover:text-blue-800">View</a>
 								@if ($task->helper)
@@ -80,7 +81,7 @@
 						</tr>
 					@empty
 						<tr>
-							<td colspan="9" class="border border-gray-300 px-4 py-2 text-center text-gray-500">No tasks found.</td>
+							<td colspan="10" class="border border-gray-300 px-4 py-2 text-center text-gray-500">No tasks found.</td>
 						</tr>
 					@endforelse
 				</tbody>

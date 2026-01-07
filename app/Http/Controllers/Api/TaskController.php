@@ -31,7 +31,7 @@ class TaskController extends Controller
 
             'urgency_level' => 'required|in:urgent,today,tomorrow,week,custom',
 
-            'help_needed_within' => 'nullable|required_if:urgency_level,urgent|integer|min:5',
+            'duration' => 'nullable|required_if:urgency_level,urgent|integer|min:5',
 
             'deadline' => 'nullable|required_if:urgency_level,custom|date',
 
@@ -52,7 +52,7 @@ class TaskController extends Controller
             'images.*' => 'image|mimes:jpg,jpeg,png|max:4096'
 
         ], [
-            'help_needed_within.required_if' => 'Urgent tasks must include minutes.',
+            'duration.required_if' => 'Urgent tasks must include minutes.',
             'deadline.required_if' => 'Custom urgency must have date and time.'
         ]);
 
@@ -73,7 +73,7 @@ class TaskController extends Controller
         switch ($validated['urgency_level']) {
 
             case 'urgent':
-                $finalDeadline = Carbon::now()->addMinutes($validated['help_needed_within']);
+                $finalDeadline = Carbon::now()->addMinutes($validated['duration']);
                 break;
 
             case 'today':
@@ -109,7 +109,7 @@ class TaskController extends Controller
                 'amount' => $validated['amount'],
 
                 'urgency_level' => $validated['urgency_level'],
-                'help_needed_within' => $validated['help_needed_within'] ?? null,
+                'duration' => $validated['duration'] ?? null,
                 'deadline' => $finalDeadline,
 
                 'location' => $validated['location'],

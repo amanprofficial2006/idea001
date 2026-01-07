@@ -29,7 +29,7 @@ class StoreTaskRequest extends FormRequest
             'budget_type' => 'required|in:fixed,hourly',
             'amount' => 'required|numeric',
             'urgency_level' => 'required|in:urgent,today,tomorrow,week,custom',
-            'help_needed_within' => 'nullable|integer',
+            'duration' => 'nullable|integer',
             'deadline' => 'nullable|date',
             'location' => 'required|string|max:255',
             'address' => 'nullable|string',

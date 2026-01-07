@@ -101,12 +101,11 @@
 				</div>
 
 				<div class="mb-4">
-					<label for="help_needed_within" class="block text-sm font-medium text-gray-700">Help Needed Within (minutes)</label>
-					<input type="number" name="help_needed_within" id="help_needed_within"
-						value="{{ old("help_needed_within", $task->help_needed_within) }}"
+					<label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+					<input type="number" name="duration" id="duration" value="{{ old("duration", $task->duration) }}"
 						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-					@if ($errors->has("help_needed_within"))
-						<p class="mt-1 text-sm text-red-600">{{ $errors->first("help_needed_within") }}</p>
+					@if ($errors->has("duration"))
+						<p class="mt-1 text-sm text-red-600">{{ $errors->first("duration") }}</p>
 					@endif
 				</div>
 
