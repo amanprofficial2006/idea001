@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskSkill extends Model
 {
+    protected $table = 'task_skill';
     protected $fillable = [
         'task_id',
         'skill_name',
