@@ -25,6 +25,10 @@ class User extends Authenticatable
         'password',
         'profile_image',
 
+        'location',
+        'description',
+        'cover_image',
+
         'is_active',
         'is_blocked',
         'blocked_reason',

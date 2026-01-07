@@ -25,7 +25,8 @@ Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'getProfile']);
-    Route::put('/profile', [UserController::class, 'updateProfile']);
+    Route::post('/profile', [UserController::class, 'updateProfile']);
+    Route::post('/toggle-online', [UserController::class, 'toggleOnlineStatus']);
 });
 
 Route::get('/organisation', [OrganisationController::class, 'index']);

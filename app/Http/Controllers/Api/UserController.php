@@ -160,6 +160,9 @@ class UserController extends Controller
                 'rating_count' => $user->rating_count,
                 'last_login_at' => $user->last_login_at,
                 'last_seen_at' => $user->last_seen_at,
+                'created_at' => $user->created_at,
+                'last_login_at' => $user->last_login_at,
+                'last_seen_at' => $user->last_seen_at,
             ],
         ], 200);
     }
@@ -172,7 +175,10 @@ class UserController extends Controller
             'name' => 'sometimes|required|string|max:100',
             'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
             'password' => 'sometimes|required|string|min:6|confirmed',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'location' => 'sometimes|nullable|string|max:255',
+            'description' => 'sometimes|nullable|string|max:1000',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         if ($validator->fails()) {
@@ -228,6 +234,9 @@ class UserController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'profile_image_url' => $user->profile_image_url,
+                'location' => $user->location,
+                'description' => $user->description,
+                'cover_image_url' => $user->cover_image_url,
                 'is_verified' => $user->is_verified,
             ],
         ], 200);
@@ -249,6 +258,28 @@ class UserController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Logged out successfully',
+        ], 200);
+    }
+
+    public function toggleOnlineStatus(Request $request)
+    {
+        $user = $request->user();
+
+        // Toggle the online status
+        $newStatus = !$user->is_online;
+
+        $user->update([
+            'is_online' => $newStatus,
+            'last_seen_at' => now(),
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Online status toggled successfully',
+            'data' => [
+                'is_online' => $newStatus,
+                'last_seen_at' => $user->last_seen_at,
+            ],
         ], 200);
     }
 }
