@@ -5,4 +5,5 @@
 -   [x] Create StoreTaskRequest for validation
 -   [x] Update TaskController to use StoreTaskRequest instead of inline validation
 -   [x] Fix mass assignment error by adding fillable properties to TaskSkill model
+-   [x] Fix TaskSkill model class name (was incorrectly TaskImage)
 -   [ ] Test the API endpoint (run Laravel server and test with Postman or similar)
