@@ -263,11 +263,20 @@ class UserController extends Controller
 
     public function toggleOnlineStatus(Request $request)
     {
+        // Logged-in user from token
         $user = $request->user();
 
-        // Toggle the online status
-        $newStatus = !$user->is_online;
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized user'
+            ], 401);
+        }
 
+        // Toggle 0/1 automatically
+        $newStatus = $user->is_online == 1 ? 0 : 1;
+
+        // Update DB
         $user->update([
             'is_online' => $newStatus,
             'last_seen_at' => now(),
@@ -275,11 +284,11 @@ class UserController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Online status toggled successfully',
+            'message' => 'Online status updated successfully',
             'data' => [
                 'is_online' => $newStatus,
                 'last_seen_at' => $user->last_seen_at,
             ],
-        ], 200);
+        ]);
     }
 }
