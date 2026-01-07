@@ -43,7 +43,8 @@
 			<span>Subcategories</span>
 		</a>
 
-		<a href="#" class="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-slate-700">
+		<a href="{{ route("admin.tasks.index") }}"
+			class="{{ request()->routeIs("admin.tasks.*") ? "bg-slate-800" : "hover:bg-slate-700" }} flex items-center gap-3 rounded-lg px-4 py-2">
 			<span>📌</span>
 			<span>Tasks</span>
 		</a>

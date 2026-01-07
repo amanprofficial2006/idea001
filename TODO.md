@@ -1,9 +1,23 @@
-# TODO: Create API for Posting Tasks
+## Steps to Complete:
 
--   [x] Create TaskController in app/Http/Controllers/Api/TaskController.php with store method for task creation
--   [x] Add POST /tasks route in routes/api.php under auth:sanctum middleware
--   [x] Create StoreTaskRequest for validation
--   [x] Update TaskController to use StoreTaskRequest instead of inline validation
--   [x] Fix mass assignment error by adding fillable properties to TaskSkill model
--   [x] Fix TaskSkill model class name (was incorrectly TaskImage)
--   [ ] Test the API endpoint (run Laravel server and test with Postman or similar)
+-   [x] Create Admin/TaskController.php with resource methods
+-   [ ] Add Route::resource('tasks', TaskController::class); to routes/admin.php
+-   [ ] Update sidebar.blade.php to link to route("admin.tasks.index")
+-   [ ] Create resources/views/admin/tasks/index.blade.php
+-   [ ] Create resources/views/admin/tasks/create.blade.php
+-   [ ] Create resources/views/admin/tasks/edit.blade.php
+-   [ ] Create resources/views/admin/tasks/show.blade.php
+-   [ ] # Test navigation and functionality
+
+# Task: Make Task Module in Sidebar Working - COMPLETED
+
+## Steps Completed:
+
+-   [x] Create Admin/TaskController.php with resource methods
+-   [x] Add Route::resource('tasks', TaskController::class); to routes/admin.php
+-   [x] Update sidebar.blade.php to link to route("admin.tasks.index")
+-   [x] Create resources/views/admin/tasks/index.blade.php
+-   [x] Create resources/views/admin/tasks/create.blade.php
+-   [x] Create resources/views/admin/tasks/edit.blade.php
+-   [x] Create resources/views/admin/tasks/show.blade.php
+-   [x] Test navigation and functionality - Routes verified and working
