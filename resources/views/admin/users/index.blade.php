@@ -36,8 +36,11 @@
 					@forelse($users as $user)
 						<tr class="hover:bg-gray-50">
 							<td class="border border-gray-300 px-4 py-2">{{ $loop->iteration }}</td>
-							<td class="border border-gray-300 px-4 py-2">
+							<td class="relative border border-gray-300 px-4 py-2">
 								<img src="{{ $user->profile_image_url }}" alt="Profile Image" class="h-10 w-10 rounded-full object-cover">
+								@if ($user->is_online)
+									<div class="absolute right-0 top-0 h-3 w-3 rounded-full border-2 border-white bg-green-500"></div>
+								@endif
 							</td>
 							<td class="border border-gray-300 px-4 py-2">{{ $user->user_uid }}</td>
 							<td class="border border-gray-300 px-4 py-2">{{ $user->name }}</td>
