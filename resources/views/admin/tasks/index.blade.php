@@ -30,6 +30,7 @@
 						<th class="border border-gray-300 px-4 py-2 text-left">Budget</th>
 						<th class="border border-gray-300 px-4 py-2 text-left">Status</th>
 						<th class="border border-gray-300 px-4 py-2 text-left">Urgency</th>
+						<th class="border border-gray-300 px-4 py-2 text-left">Duration</th>
 						<th class="border border-gray-300 px-4 py-2 text-left">Actions</th>
 					</tr>
 				</thead>
@@ -62,7 +63,27 @@
 								@endif
 							</td>
 							<td class="border border-gray-300 px-4 py-2">{{ ucfirst($task->urgency_level) }}</td>
-							<td class="border border-gray-300 px-4 py-2">{{ $task->duration ? $task->duration . " min" : "N/A" }}</td>
+							<td class="border border-gray-300 px-4 py-2">
+								@if ($task->duration)
+									@if ($task->duration == "1")
+										1 hour or less
+									@elseif($task->duration == "2")
+										1-2 hours
+									@elseif($task->duration == "4")
+										2-4 hours
+									@elseif($task->duration == "8")
+										4-8 hours
+									@elseif($task->duration == "full-day")
+										Full day
+									@elseif($task->duration == "multiple")
+										Multiple days
+									@else
+										{{ $task->duration }}
+									@endif
+								@else
+									N/A
+								@endif
+							</td>
 							<td class="border border-gray-300 px-4 py-2">
 								<a href="{{ route("admin.tasks.show", $task) }}" class="text-blue-600 hover:text-blue-800">View</a>
 								@if ($task->helper)

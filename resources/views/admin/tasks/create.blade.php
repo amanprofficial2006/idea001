@@ -96,9 +96,17 @@
 				</div>
 
 				<div class="mb-4">
-					<label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
-					<input type="number" name="duration" id="duration" value="{{ old("duration") }}"
+					<label for="duration" class="block text-sm font-medium text-gray-700">Duration</label>
+					<select name="duration" id="duration"
 						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+						<option value="">Select duration</option>
+						<option value="1" {{ old("duration") == "1" ? "selected" : "" }}>1 hour or less</option>
+						<option value="2" {{ old("duration") == "2" ? "selected" : "" }}>1-2 hours</option>
+						<option value="4" {{ old("duration") == "4" ? "selected" : "" }}>2-4 hours</option>
+						<option value="8" {{ old("duration") == "8" ? "selected" : "" }}>4-8 hours</option>
+						<option value="full-day" {{ old("duration") == "full-day" ? "selected" : "" }}>Full day</option>
+						<option value="multiple" {{ old("duration") == "multiple" ? "selected" : "" }}>Multiple days</option>
+					</select>
 					@if ($errors->has("duration"))
 						<p class="mt-1 text-sm text-red-600">{{ $errors->first("duration") }}</p>
 					@endif
