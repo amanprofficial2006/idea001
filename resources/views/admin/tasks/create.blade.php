@@ -20,10 +20,17 @@
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<div class="mb-4">
-					<label for="user_id" class="block text-sm font-medium text-gray-700">User ID</label>
-					<input type="number" name="user_id" id="user_id" value="{{ old("user_id") }}"
+					<label for="user_id" class="block text-sm font-medium text-gray-700">User</label>
+					<select name="user_id" id="user_id"
 						class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
 						required>
+						<option value="">Select a user</option>
+						@foreach ($users as $user)
+							<option value="{{ $user->id }}" {{ old("user_id") == $user->id ? "selected" : "" }}>
+								{{ $user->name }} ({{ $user->email }})
+							</option>
+						@endforeach
+					</select>
 					@if ($errors->has("user_id"))
 						<p class="mt-1 text-sm text-red-600">{{ $errors->first("user_id") }}</p>
 					@endif

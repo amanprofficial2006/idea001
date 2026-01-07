@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -16,7 +17,8 @@ class TaskController extends Controller
 
     public function create()
     {
-        return view('admin.tasks.create');
+        $users = User::all();
+        return view('admin.tasks.create', compact('users'));
     }
 
     public function store(Request $request)
@@ -54,7 +56,8 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
-        return view('admin.tasks.edit', compact('task'));
+        $users = User::all();
+        return view('admin.tasks.edit', compact('task', 'users'));
     }
 
     public function update(Request $request, Task $task)
