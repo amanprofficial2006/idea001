@@ -33,7 +33,11 @@
 						<p class="mt-1 text-sm text-gray-900">{{ $task->category }}</p>
 					</div>
 					<div>
-						<label class="block text-sm font-medium text-gray-700">Budget</label>
+						<label class="block text-sm font-medium text-gray-700">Budget Type</label>
+						<p class="mt-1 text-sm text-gray-900">{{ ucfirst($task->budget_type) }}</p>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700">Budget Amount</label>
 						<p class="mt-1 text-sm text-gray-900">
 							{{ $task->budget_type === "fixed" ? "₹" : "₹/hr" }}{{ number_format($task->amount, 2) }}
 						</p>
@@ -112,5 +116,29 @@
 				</div>
 			</div>
 		</div>
+
+		@if ($task->skills->count() > 0)
+			<div class="mt-6">
+				<h3 class="text-lg font-medium text-gray-900">Skills Required</h3>
+				<div class="mt-4 flex flex-wrap gap-2">
+					@foreach ($task->skills as $skill)
+						<span class="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">{{ $skill->skill }}</span>
+					@endforeach
+				</div>
+			</div>
+		@endif
+
+		@if ($task->images->count() > 0)
+			<div class="mt-6">
+				<h3 class="text-lg font-medium text-gray-900">Task Images</h3>
+				<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+					@foreach ($task->images as $image)
+						<div class="overflow-hidden rounded-lg bg-gray-200">
+							<img src="{{ asset("storage/" . $image->image) }}" alt="Task Image" class="h-48 w-full object-cover">
+						</div>
+					@endforeach
+				</div>
+			</div>
+		@endif
 	</div>
 @endsection

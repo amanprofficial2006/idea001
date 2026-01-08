@@ -49,4 +49,14 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'helper_id');
     }
+
+    public function skills()
+    {
+        return $this->hasMany(TaskSkill::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(TaskImage::class);
+    }
 }

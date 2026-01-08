@@ -50,7 +50,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $task->load(['user', 'helper']);
+        $task->load(['user', 'helper', 'skills', 'images']);
         return view('admin.tasks.show', compact('task'));
     }
 
