@@ -189,6 +189,13 @@ class TaskController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
+        // Add full URL to images
+        foreach ($tasks as $task) {
+            foreach ($task->images as $image) {
+                $image->full_url = asset('storage/' . $image->image);
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Your tasks fetched successfully.',
