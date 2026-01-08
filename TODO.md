@@ -1,2 +1,4 @@
--   [x] Modify CategoryController index method to return only id, name, image_url
--   [x] Test the API endpoint
+# TODO: Fix Carbon Error in TaskController.php
+
+-   [x] Update validation rule for 'duration' to 'nullable|numeric'
+-   [x] Cast $validated['duration'] to int in the urgent case for addMinutes
