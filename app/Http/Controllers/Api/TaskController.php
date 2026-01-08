@@ -203,4 +203,35 @@ class TaskController extends Controller
             'tasks' => $tasks
         ], 200);
     }
+
+    public function show($id)
+    {
+        $user = auth()->user();
+
+        // Task with relationships
+        $task = Task::with([
+            'images',
+            'skills',
+            'user:id,name,email,phone',
+            'assignedHelper:id,name,email,phone'
+        ])->find($id);
+
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+
+        // Add full URL to images
+        foreach ($task->images as $image) {
+            $image->full_url = asset('storage/' . $image->image);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task details fetched successfully.',
+            'task' => $task
+        ], 200);
+    }
 }
