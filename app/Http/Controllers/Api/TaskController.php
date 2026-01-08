@@ -9,6 +9,7 @@ use App\Models\TaskSkill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class TaskController extends Controller
@@ -176,5 +177,23 @@ class TaskController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function postedTasks()
+    {
+        $user = auth()->user();
+
+        // Fetch tasks with related images + skills
+        $tasks = Task::with(['images', 'skills'])
+            ->where('user_id', $user->id)
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your tasks fetched successfully.',
+            'count' => $tasks->count(),
+            'tasks' => $tasks
+        ], 200);
     }
 }
