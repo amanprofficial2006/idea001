@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [UserController::class, 'updateProfile']);
     Route::post('/toggle-online', [UserController::class, 'toggleOnlineStatus']);
     Route::post('/tasks', [TaskController::class, 'store']);
-    Route::put('/tasks/{id}', [TaskController::class, 'update']);
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
     Route::get('/task/{id}', [TaskController::class, 'show']);
     Route::get('/post-task', [TaskController::class, 'postedTasks']);
 });
