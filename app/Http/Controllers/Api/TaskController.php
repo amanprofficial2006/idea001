@@ -439,4 +439,33 @@ public function destroy($id)
     }
 }
 
+public function nearTasks()
+{
+    $user = auth()->user();
+
+    // Fetch tasks that do NOT belong to logged in user
+    // Only PUBLIC tasks will be shown
+    $tasks = Task::with(['images', 'skills', 'user:id,name'])
+        ->where('user_id', '!=', $user->id)
+        ->where('privacy', 'public')  // only public tasks
+        ->whereIn('status', ['pending', 'open']) // active tasks only
+        ->orderBy('id', 'DESC')
+        ->get();
+
+    // Add full image URL
+    foreach ($tasks as $task) {
+        foreach ($task->images as $image) {
+            $image->full_url = asset('storage/' . $image->image);
+        }
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Nearby tasks fetched successfully.',
+        'count' => $tasks->count(),
+        'tasks' => $tasks
+    ], 200);
+}
+
+
 }
