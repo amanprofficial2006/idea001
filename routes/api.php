@@ -31,8 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'getProfile']);
     Route::post('/profile', [UserController::class, 'updateProfile']);
     Route::post('/toggle-online', [UserController::class, 'toggleOnlineStatus']);
-    Route::post('/tasks', [TaskController::class, 'store']);
-    Route::Post('/delete/{id}', [TaskController::class, 'destroy']);
+  Route::post('/tasks', [TaskController::class, 'store']);
+    Route::post('/tasks/delete/{id}', [TaskController::class, 'destroy']);
     Route::get('/task/{id}', [TaskController::class, 'show']);
     Route::get('/post-task', [TaskController::class, 'postedTasks']);
 });

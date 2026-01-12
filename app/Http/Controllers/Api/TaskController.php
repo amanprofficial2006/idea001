@@ -381,58 +381,62 @@ class TaskController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        // Find the task
-        $task = Task::find($id);
 
-        if (!$task) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Task not found.',
-            ], 404);
-        }
 
-        // Check ownership and status
-        if ($task->user_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorized to delete this task.',
-            ], 403);
-        }
+public function destroy($id)
+{
+    // Find task with relations
+    $task = Task::with(['skills', 'images'])->find($id);
 
-        if ($task->status !== 'pending') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Task can only be deleted while it is pending.',
-            ], 422);
-        }
-
-        // Database transaction
-        DB::beginTransaction();
-
-        try {
-            // Delete related skills and images
-            $task->skills()->delete();
-            $task->images()->delete();
-
-            // Delete the task
-            $task->delete();
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Task deleted successfully.',
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    if (!$task) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Task not found.',
+        ], 404);
     }
+
+    // Check ownership
+    if ($task->user_id != auth()->id()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'You are not authorized to delete this task.',
+        ], 403);
+    }
+
+    // Only pending tasks can be deleted
+    if ($task->status !== 'pending') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Task can only be deleted while it is pending.',
+        ], 422);
+    }
+
+    DB::beginTransaction();
+
+    try {
+        // Delete related skills & images
+        $task->skills()->delete();
+        $task->images()->delete();
+
+        // Delete task
+        $task->delete();
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task deleted successfully.',
+        ], 200);
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
