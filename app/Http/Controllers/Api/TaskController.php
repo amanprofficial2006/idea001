@@ -183,8 +183,8 @@ class TaskController extends Controller
     {
         $user = auth()->user();
 
-        // Fetch tasks with related images + skills
-        $tasks = Task::with(['images', 'skills'])
+        // Fetch tasks with related images, skills, and helper details
+        $tasks = Task::with(['images', 'skills', 'helper:id,name,user_uid'])
             ->where('user_id', $user->id)
             ->orderBy('id', 'DESC')
             ->get();
