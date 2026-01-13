@@ -476,4 +476,55 @@ class TaskController extends Controller
             'tasks' => $tasks
         ], 200);
     }
+
+    public function acceptTask($id)
+    {
+        $user = auth()->user();
+
+        // Find the task
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+
+        // Check if task is already accepted or completed
+        if ($task->status !== 'pending' && $task->status !== 'open') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task is not available for acceptance.',
+            ], 422);
+        }
+
+        // Check if user is not the task owner
+        if ($task->user_id == $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot accept your own task.',
+            ], 403);
+        }
+
+        // Check if task is already assigned to someone else
+        if ($task->helper_id && $task->helper_id != $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task is already accepted by another helper.',
+            ], 422);
+        }
+
+        // Update task status and assign helper
+        $task->update([
+            'status' => 'accepted',
+            'helper_id' => $user->id
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task accepted successfully.',
+            'task' => $task
+        ], 200);
+    }
 }
