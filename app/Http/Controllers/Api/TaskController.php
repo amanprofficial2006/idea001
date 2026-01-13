@@ -446,7 +446,7 @@ class TaskController extends Controller
         // Fetch tasks that do NOT belong to logged in user
         // Only PUBLIC tasks will be shown
         $tasks = Task::select('tasks.*', 'categories.name as category_name')
-            ->leftJoin('categories', 'tasks.category', '=', 'categories.id')
+            ->leftJoin('categories', 'tasks.category', '=', 'categories.name')
             ->with(['images', 'skills', 'user:id,name'])
             ->where('tasks.user_id', '!=', $user->id)
             ->where('tasks.privacy', 'public')  // only public tasks
