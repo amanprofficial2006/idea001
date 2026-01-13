@@ -460,6 +460,7 @@ class TaskController extends Controller
                 $image->full_url = asset('storage/' . $image->image);
             }
             $task->category = $task->category_name ?? $task->category;
+            unset($task->category_name);
         }
 
         return response()->json([
