@@ -208,13 +208,15 @@ class TaskController extends Controller
     {
         $user = auth()->user();
 
-        // Task with relationships
-        $task = Task::with([
-            'images',
-            'skills',
-            'user:id,name,email,phone',
-            'assignedHelper:id,name,email,phone'
-        ])->find($id);
+        // Task with relationships and category name
+        $task = Task::select('tasks.*', 'categories.name as category_name')
+            ->leftJoin('categories', 'tasks.category', '=', 'categories.id')
+            ->with([
+                'images',
+                'skills',
+                'user:id,name,email,phone',
+                'assignedHelper:id,name,email,phone'
+            ])->find($id);
 
         if (!$task) {
             return response()->json([
@@ -222,6 +224,10 @@ class TaskController extends Controller
                 'message' => 'Task not found.',
             ], 404);
         }
+
+        // Replace category ID with name
+        $task->category = $task->category_name ?? $task->category;
+        unset($task->category_name);
 
         // Add full URL to images
         foreach ($task->images as $image) {
