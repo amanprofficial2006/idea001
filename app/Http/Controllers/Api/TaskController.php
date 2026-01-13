@@ -210,7 +210,7 @@ class TaskController extends Controller
 
         // Task with relationships and category name
         $task = Task::select('tasks.*', 'categories.name as category_name')
-            ->leftJoin('categories', 'tasks.category', '=', 'categories.id')
+            ->leftJoin(DB::raw('categories on tasks.category = categories.id::text'), function ($join) {})
             ->with([
                 'images',
                 'skills',
