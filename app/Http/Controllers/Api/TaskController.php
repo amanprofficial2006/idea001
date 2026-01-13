@@ -383,89 +383,90 @@ class TaskController extends Controller
 
 
 
-public function destroy($id)
-{
-    // Find task with relations
-    $task = Task::with(['skills', 'images'])->find($id);
+    public function destroy($id)
+    {
+        // Find task with relations
+        $task = Task::with(['skills', 'images'])->find($id);
 
-    if (!$task) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Task not found.',
-        ], 404);
-    }
+        if (!$task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
 
-    // Check ownership
-    if ($task->user_id != auth()->id()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'You are not authorized to delete this task.',
-        ], 403);
-    }
+        // Check ownership
+        if ($task->user_id != auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to delete this task.',
+            ], 403);
+        }
 
-    // Only pending tasks can be deleted
-    if ($task->status !== 'pending') {
-        return response()->json([
-            'success' => false,
-            'message' => 'Task can only be deleted while it is pending.',
-        ], 422);
-    }
+        // Only pending tasks can be deleted
+        if ($task->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task can only be deleted while it is pending.',
+            ], 422);
+        }
 
-    DB::beginTransaction();
+        DB::beginTransaction();
 
-    try {
-        // Delete related skills & images
-        $task->skills()->delete();
-        $task->images()->delete();
+        try {
+            // Delete related skills & images
+            $task->skills()->delete();
+            $task->images()->delete();
 
-        // Delete task
-        $task->delete();
+            // Delete task
+            $task->delete();
 
-        DB::commit();
+            DB::commit();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Task deleted successfully.',
-        ], 200);
-    } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task deleted successfully.',
+            ], 200);
+        } catch (\Exception $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Something went wrong.',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
-
-public function nearTasks()
-{
-    $user = auth()->user();
-
-    // Fetch tasks that do NOT belong to logged in user
-    // Only PUBLIC tasks will be shown
-    $tasks = Task::with(['images', 'skills', 'user:id,name'])
-        ->where('user_id', '!=', $user->id)
-        ->where('privacy', 'public')  // only public tasks
-        ->whereIn('status', ['pending', 'open']) // active tasks only
-        ->orderBy('id', 'DESC')
-        ->get();
-
-    // Add full image URL
-    foreach ($tasks as $task) {
-        foreach ($task->images as $image) {
-            $image->full_url = asset('storage/' . $image->image);
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Nearby tasks fetched successfully.',
-        'count' => $tasks->count(),
-        'tasks' => $tasks
-    ], 200);
-}
+    public function nearTasks()
+    {
+        $user = auth()->user();
 
+        // Fetch tasks that do NOT belong to logged in user
+        // Only PUBLIC tasks will be shown
+        $tasks = Task::select('tasks.*', 'categories.name as category_name')
+            ->leftJoin('categories', 'tasks.category', '=', 'categories.id')
+            ->with(['images', 'skills', 'user:id,name'])
+            ->where('tasks.user_id', '!=', $user->id)
+            ->where('tasks.privacy', 'public')  // only public tasks
+            ->whereIn('tasks.status', ['pending', 'open']) // active tasks only
+            ->orderBy('tasks.id', 'DESC')
+            ->get();
 
+        // Add full image URL and replace category with name
+        foreach ($tasks as $task) {
+            foreach ($task->images as $image) {
+                $image->full_url = asset('storage/' . $image->image);
+            }
+            $task->category = $task->category_name ?? $task->category;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Nearby tasks fetched successfully.',
+            'count' => $tasks->count(),
+            'tasks' => $tasks
+        ], 200);
+    }
 }
