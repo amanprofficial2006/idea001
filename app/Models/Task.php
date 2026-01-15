@@ -47,7 +47,7 @@ class Task extends Model
 
     public function assignedHelper()
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->belongsTo(User::class, 'helper_id');
     }
 
     public function helper(): BelongsTo

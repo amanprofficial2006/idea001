@@ -1,6 +1,8 @@
-# TODO: Implement Task Edit and Delete APIs
+# Task Completion TODO
 
--   [x] Add 'update' method to app/Http/Controllers/Api/TaskController.php: Validate request, check ownership and status=='pending', update task fields, recalculate deadline if needed, replace skills and images.
--   [x] Add PUT route for /tasks/{id} in routes/api.php under auth:sanctum middleware.
--   [x] Add 'destroy' method to app/Http/Controllers/Api/TaskController.php: Check ownership and status=='pending', delete task with related skills and images.
--   [x] Add DELETE route for /tasks/{id} in routes/api.php under auth:sanctum middleware.
+## Completed Tasks
+- [x] Fix Task model's assignedHelper relationship to use 'helper_id' foreign key
+- [x] Update show function in TaskController to use 'helper' relationship and include 'user_uid' in select fields
+
+## Summary
+The issue was that the assignedHelper relationship in the Task model was using the wrong foreign key ('assigned_to' instead of 'helper_id'), causing the helper to not load properly. Additionally, the show function was using 'assignedHelper' instead of 'helper' for consistency, and 'user_uid' was not included in the select fields. These have been fixed, so now when helper_id is null, the helper object will be null, but the fields (id, name, email, phone, user_uid) will be included as null in the response.
