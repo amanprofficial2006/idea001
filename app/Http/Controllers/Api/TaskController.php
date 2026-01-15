@@ -103,7 +103,7 @@ class TaskController extends Controller
             // 4. CREATE TASK (TOKEN USER)
             // ------------------------------------
             $task = Task::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'title' => $validated['title'],
                 'category' => $validated['category'],
                 'description' => $validated['description'],
@@ -181,7 +181,7 @@ class TaskController extends Controller
 
     public function postedTasks()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Fetch tasks with related images, skills, and helper details
         $tasks = Task::with(['images', 'skills', 'helper:id,name,user_uid'])
@@ -206,7 +206,7 @@ class TaskController extends Controller
 
     public function show($id)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Task with relationships and category name
         $task = Task::select('tasks.*', 'categories.name as category_name')
@@ -254,7 +254,7 @@ class TaskController extends Controller
         }
 
         // Check ownership and status
-        if ($task->user_id !== auth()->id()) {
+        if ($task->user_id !== Auth::id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorized to edit this task.',
@@ -402,7 +402,7 @@ class TaskController extends Controller
         }
 
         // Check ownership
-        if ($task->user_id != auth()->id()) {
+        if ($task->user_id != Auth::id()) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorized to delete this task.',
@@ -447,7 +447,7 @@ class TaskController extends Controller
 
     public function nearTasks()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Fetch tasks that do NOT belong to logged in user
         // Only PUBLIC tasks will be shown
@@ -455,8 +455,7 @@ class TaskController extends Controller
             ->leftJoin(DB::raw('categories on tasks.category = categories.id::text'), function ($join) {})
             ->with(['images', 'skills', 'user:id,name'])
             ->where('tasks.user_id', '!=', $user->id)
-            ->where('tasks.privacy', 'public')  // only public tasks
-            ->whereIn('tasks.status', ['pending', 'open']) // active tasks only
+            ->where('tasks.privacy', 'public')
             ->orderBy('tasks.id', 'DESC')
             ->get();
 
@@ -479,7 +478,7 @@ class TaskController extends Controller
 
     public function acceptTask($id)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Find the task
         $task = Task::find($id);
