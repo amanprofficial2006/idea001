@@ -57,6 +57,10 @@
 					placeholder="••••••••">
 			</div>
 
+			{{-- 🔥 HIDDEN FIELDS FOR FIREBASE --}}
+			<input type="hidden" name="device_token" id="device_token">
+			<input type="hidden" name="device_type" value="web">
+
 			{{-- Submit --}}
 			<button type="submit"
 				class="w-full rounded-lg bg-indigo-600 py-2.5 font-semibold text-white transition duration-200 hover:bg-indigo-700">
@@ -72,14 +76,28 @@
 	</div>
 
 	{{-- Firebase JS for device token --}}
-	<script>
-		document.addEventListener("DOMContentLoaded", async function() {
-			if (Notification.permission !== "granted") {
-				await Notification.requestPermission();
-			}
+	<script type="module">
+		import {
+			getDeviceToken
+		} from "/js/firebase.js";
 
-			const token = await getDeviceToken(); // firebase.js se
-			document.getElementById("device_token").value = token;
+		document.addEventListener("DOMContentLoaded", async () => {
+			try {
+				if (Notification.permission !== "granted") {
+					await Notification.requestPermission();
+				}
+
+				const token = await getDeviceToken();
+
+				if (token) {
+					document.getElementById("device_token").value = token;
+					console.log("Admin FCM Token:", token);
+				} else {
+					console.warn("FCM token not generated");
+				}
+			} catch (error) {
+				console.error("Firebase token error:", error);
+			}
 		});
 	</script>
 
