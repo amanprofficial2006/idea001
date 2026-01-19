@@ -384,17 +384,21 @@ class TaskController extends Controller
         $user = Auth::user();
 
         // Fetch tasks accepted by the helper with related images, skills, and user details
-        $tasks = Task::with(['images', 'skills', 'user:id,name,user_uid'])
+        $tasks = Task::select('tasks.*', 'categories.name as category_name')
+            ->leftJoin(DB::raw('categories on tasks.category = categories.id::text'), function ($join) {})
+            ->with(['images', 'skills', 'user:id,name,user_uid'])
             ->where('helper_id', $user->id)
             ->whereIn('status', ['accepted', 'in-progress', 'completed'])
             ->orderBy('id', 'DESC')
             ->get();
 
-        // Add full URL to images
+        // Add full URL to images and replace category with name
         foreach ($tasks as $task) {
             foreach ($task->images as $image) {
                 $image->full_url = asset('storage/' . $image->image);
             }
+            $task->category = $task->category_name ?? $task->category;
+            unset($task->category_name);
         }
 
         return response()->json([
