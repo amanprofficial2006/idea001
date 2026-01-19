@@ -6,6 +6,13 @@
 	<title>@yield("title", "Admin Panel")</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	{{-- Favicon --}}
+	@if ($organisation && $organisation->logo)
+		<link rel="icon" href="{{ asset("storage/" . $organisation->logo) }}">
+	@else
+		<link rel="icon" type="image/x-icon" href="{{ asset("favicon.ico") }}">
+	@endif
+
 	{{-- Tailwind CDN --}}
 	<script src="https://cdn.tailwindcss.com"></script>
 </head>
