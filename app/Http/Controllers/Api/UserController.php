@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\Notification;
 
 class UserController extends Controller
 {
@@ -55,6 +59,35 @@ class UserController extends Controller
 
         // OPTIONAL: if you are using Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Send welcome notification via Firebase if device_token is provided
+        if ($user->device_token) {
+            try {
+                $factory = (new Factory)
+                    ->withServiceAccount(
+                        base_path(config('services.firebase.credentials'))
+                    )
+                    ->withProjectId(config('services.firebase.project_id'));
+
+                $messaging = $factory->createMessaging();
+
+                $message = CloudMessage::withTarget('token', $user->device_token)
+                    ->withNotification(
+                        Notification::create(
+                            'Welcome to DoHelp!',
+                            'Your account has been created successfully.'
+                        )
+                    );
+
+                $messaging->send($message);
+            } catch (\Throwable $e) {
+                Log::error('Firebase notification failed', [
+                    'error' => $e->getMessage(),
+                    'user_id' => $user->id,
+                ]);
+            }
+        }
+
 
         return response()->json([
             'status'  => true,
