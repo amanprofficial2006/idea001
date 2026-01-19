@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken } from 'firebase/messaging';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
@@ -25,3 +25,10 @@ export async function getDeviceToken() {
         return null;
     }
 }
+
+// Handle foreground messages (when tab is active)
+// Only log the message, do not show duplicate notification
+onMessage(messaging, (payload) => {
+    console.log('Foreground message received:', payload);
+    // ❌ Removed: new Notification(...) to prevent duplicate notifications
+});
