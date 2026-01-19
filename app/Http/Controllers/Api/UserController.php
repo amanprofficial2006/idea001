@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Organisation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,13 +17,16 @@ use Kreait\Firebase\Messaging\WebPushConfig;
 
 class UserController extends Controller
 {
+
+
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email',
-            'phone'    => 'required|string|min:10|max:15|unique:users,phone',
-            'password' => 'required|string|min:6|confirmed',
+            'name'         => 'required|string|max:100',
+            'email'        => 'required|email|unique:users,email',
+            'phone'        => 'required|string|min:10|max:15|unique:users,phone',
+            'password'     => 'required|string|min:6|confirmed',
             'device_type'  => 'nullable|string|in:android,ios,web',
             'device_token' => 'nullable|string',
         ]);
@@ -34,15 +39,18 @@ class UserController extends Controller
             ], 422);
         }
 
+        /* =========================
+       USER CREATE
+       ========================= */
         $user = User::create([
-            'name'         => $request->name,
-            'email'        => $request->email,
-            'phone'        => $request->phone,
-            'password'     => Hash::make($request->password),
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'phone'      => $request->phone,
+            'password'   => Hash::make($request->password),
 
-            'is_active'    => true,
-            'is_blocked'   => false,
-            'is_online'    => false,
+            'is_active'  => true,
+            'is_blocked' => false,
+            'is_online'  => false,
 
             'wallet_balance' => 0,
             'total_earned'   => 0,
@@ -50,58 +58,77 @@ class UserController extends Controller
             'rating_avg'   => 0,
             'rating_count' => 0,
 
-            'is_verified'      => false,
+            'is_verified'       => false,
             'verification_type' => null,
 
-            'device_type'  => $request->device_type,
+            'device_type'  => $request->device_type ?? 'web',
             'device_token' => $request->device_token,
             'last_login_at' => now(),
         ]);
 
-        // OPTIONAL: if you are using Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Send welcome notification via Firebase if device_token is provided
-        if ($user->device_token) {
-            try {
+        /* =========================
+       FETCH ORGANISATION DATA
+       ========================= */
+        $organisation = Organisation::first();
+
+        $siteName = $organisation?->name ?? config('app.name');
+        $siteLogo = $organisation?->logo
+            ? asset('storage/' . $organisation->logo)
+            : url('\public\storage\organisation_logos\EpIq7o2uQO6i8wWmIsRYxp6FjUXHwOgKdQSCDDNn.png');
+
+        /* =========================
+       ADMIN NOTIFICATION
+       ========================= */
+        try {
+            $adminTokens = Admin::whereNotNull('device_token')
+                ->pluck('device_token')
+                ->toArray();
+
+            if (!empty($adminTokens)) {
                 $factory = (new Factory)
-                    ->withServiceAccount(
-                        base_path(config('services.firebase.credentials'))
-                    )
+                    ->withServiceAccount(base_path(config('services.firebase.credentials')))
                     ->withProjectId(config('services.firebase.project_id'));
 
                 $messaging = $factory->createMessaging();
 
-                $message = CloudMessage::withTarget('token', $user->device_token)
+                $title = "New User Registered | {$siteName}";
+                $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
+
+                $message = CloudMessage::new()
                     ->withNotification(
-                        Notification::create(
-                            'Welcome to DoHelp',
-                            'Your account has been created successfully'
-                        )
+                        Notification::create($title, $body)
                     )
                     ->withWebPushConfig(
                         WebPushConfig::fromArray([
+                            'headers' => [
+                                'Urgency' => 'high',
+                            ],
                             'notification' => [
-                                'title' => 'Welcome to DoHelp',
-                                'body'  => 'Your account has been created successfully',
-                                'icon'  => 'https://dohelp.newhopeindia17.com/logo.png',
+                                'title' => $title,
+                                'body'  => $body,
+                                'icon'  => $siteLogo,
                             ],
                             'fcm_options' => [
-                                'link' => 'https://dohelp.newhopeindia17.com',
+                                'link' => url('/admin/dashboard'),
                             ],
                         ])
                     );
 
-                $messaging->send($message);
-            } catch (\Throwable $e) {
-                Log::error('Firebase notification failed', [
-                    'error' => $e->getMessage(),
-                    'user_id' => $user->id,
-                ]);
+                // 🔥 Send to ALL ADMINS
+                $messaging->sendMulticast($message, $adminTokens);
             }
+        } catch (\Throwable $e) {
+            Log::error('Admin notification failed', [
+                'error'   => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
         }
 
-
+        /* =========================
+       RESPONSE
+       ========================= */
         return response()->json([
             'status'  => true,
             'message' => 'User registered successfully',
@@ -114,6 +141,7 @@ class UserController extends Controller
             ],
         ], 200);
     }
+
 
     public function login(Request $request)
     {
