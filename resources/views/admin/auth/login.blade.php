@@ -19,7 +19,7 @@
 <body class="flex min-h-screen items-center justify-center">
 
 	<div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
-        
+
 		{{-- Header --}}
 		<div class="mb-6 text-center">
 			<h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
@@ -70,6 +70,18 @@
 		</div>
 
 	</div>
+
+	{{-- Firebase JS for device token --}}
+	<script>
+		document.addEventListener("DOMContentLoaded", async function() {
+			if (Notification.permission !== "granted") {
+				await Notification.requestPermission();
+			}
+
+			const token = await getDeviceToken(); // firebase.js se
+			document.getElementById("device_token").value = token;
+		});
+	</script>
 
 </body>
 

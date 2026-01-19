@@ -19,6 +19,8 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'device_token' => 'nullable|string',
+            'device_type' => 'nullable|string',
         ]);
 
         if (
@@ -28,8 +30,13 @@ class AuthController extends Controller
                 'is_active' => 1,
             ])
         ) {
-            Auth::guard('admin')->user()->update([
-                'last_login_at' => now()
+            $admin = Auth::guard('admin')->user();
+
+            // ✅ Update login + device info
+            $admin->update([
+                'last_login_at' => now(),
+                'device_token'  => $request->device_token,
+                'device_type'   => $request->device_type ?? 'web',
             ]);
 
             return redirect()->route('admin.dashboard');

@@ -18,6 +18,9 @@ class Admin extends Authenticatable
         'role',
         'is_active',
         'image',
+        'device_token',
+        'device_type',
+        'last_login_at',
     ];
 
     protected $hidden = [
