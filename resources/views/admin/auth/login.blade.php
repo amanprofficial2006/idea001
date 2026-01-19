@@ -77,9 +77,41 @@
 
 	{{-- Firebase JS for device token --}}
 	<script type="module">
+		// Import the functions you need from the SDKs you need
 		import {
-			getDeviceToken
-		} from "/js/firebase.js";
+			initializeApp
+		} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+		import {
+			getMessaging,
+			getToken
+		} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-messaging.js";
+
+		// Your web app's Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
+			authDomain: "dohelp-7d140.firebaseapp.com",
+			projectId: "dohelp-7d140",
+			storageBucket: "dohelp-7d140.firebasestorage.app",
+			messagingSenderId: "228064919901",
+			appId: "1:228064919901:web:b6d1f42822b129419ea8b4",
+			measurementId: "G-61V67TYW8N"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const messaging = getMessaging(app);
+
+		async function getDeviceToken() {
+			try {
+				const token = await getToken(messaging, {
+					vapidKey: 'BIWhgwdKKixoudiW4sKuSMi_eMpE1r4JxQpePCraP2i8O6XiEJbkkoL_CtSio5J4omUl8_pFliP2l2vN4qR9U-U'
+				});
+				return token;
+			} catch (error) {
+				console.error('Error getting FCM token:', error);
+				return null;
+			}
+		}
 
 		document.addEventListener("DOMContentLoaded", async () => {
 			try {
