@@ -16,9 +16,18 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 // Handle background messages (when app is not active)
-// Do not show notification here, let foreground handle it
+// Show notification in background
 messaging.onBackgroundMessage((payload) => {
   console.log('Background message received:', payload);
-  // Do not show notification in background
-  // Notifications will be handled by foreground onMessage listener
+
+  // Show notification using the notification payload
+  if (payload.notification) {
+    self.registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
+      icon: payload.notification.icon,
+      data: {
+        url: payload.fcmOptions?.link || '/admin/dashboard'
+      }
+    });
+  }
 });

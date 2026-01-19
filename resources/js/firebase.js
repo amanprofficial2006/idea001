@@ -27,15 +27,8 @@ export async function getDeviceToken() {
 }
 
 // Handle foreground messages (when tab is active)
-// Show notification manually using data payload
+// Only log the message, do not show duplicate notification
 onMessage(messaging, (payload) => {
     console.log('Foreground message received:', payload);
-
-    // Show notification only in foreground
-    if (payload.data) {
-        new Notification(payload.data.title, {
-            body: payload.data.body,
-            icon: payload.data.icon,
-        });
-    }
+    // ❌ Removed: new Notification(...) to prevent duplicate notifications
 });
