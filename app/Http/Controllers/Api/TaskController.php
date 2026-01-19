@@ -378,4 +378,30 @@ class TaskController extends Controller
             'task' => $task
         ], 200);
     }
+
+    public function acceptedTasks()
+    {
+        $user = Auth::user();
+
+        // Fetch tasks accepted by the helper with related images, skills, and user details
+        $tasks = Task::with(['images', 'skills', 'user:id,name,user_uid'])
+            ->where('helper_id', $user->id)
+            ->where('status', 'accepted')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        // Add full URL to images
+        foreach ($tasks as $task) {
+            foreach ($task->images as $image) {
+                $image->full_url = asset('storage/' . $image->image);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Accepted tasks fetched successfully.',
+            'count' => $tasks->count(),
+            'tasks' => $tasks
+        ], 200);
+    }
 }
