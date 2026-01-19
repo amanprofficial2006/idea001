@@ -386,7 +386,7 @@ class TaskController extends Controller
         // Fetch tasks accepted by the helper with related images, skills, and user details
         $tasks = Task::with(['images', 'skills', 'user:id,name,user_uid'])
             ->where('helper_id', $user->id)
-            ->where('status', 'accepted', 'in-progress', 'completed')
+            ->whereIn('status', ['accepted', 'in-progress', 'completed'])
             ->orderBy('id', 'DESC')
             ->get();
 
