@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\WebPushConfig;
 
 class UserController extends Controller
 {
@@ -74,9 +75,21 @@ class UserController extends Controller
                 $message = CloudMessage::withTarget('token', $user->device_token)
                     ->withNotification(
                         Notification::create(
-                            'Welcome to DoHelp!',
-                            'Your account has been created successfully.'
+                            'Welcome to DoHelp',
+                            'Your account has been created successfully'
                         )
+                    )
+                    ->withWebPushConfig(
+                        WebPushConfig::fromArray([
+                            'notification' => [
+                                'title' => 'Welcome to DoHelp',
+                                'body'  => 'Your account has been created successfully',
+                                'icon'  => 'https://dohelp.newhopeindia17.com/logo.png',
+                            ],
+                            'fcm_options' => [
+                                'link' => 'https://dohelp.newhopeindia17.com',
+                            ],
+                        ])
                     );
 
                 $messaging->send($message);
