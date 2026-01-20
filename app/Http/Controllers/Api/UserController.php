@@ -118,7 +118,7 @@ class UserController extends Controller
                     'user_id' => $user->id,
                 ]);
                 // 🔥 Send to ALL ADMINS
-                // $messaging->sendMulticast($message, $adminTokens);
+                $messaging->sendMulticast($message, $adminTokens);
             }
         } catch (\Throwable $e) {
             Log::error('Admin notification failed', [
