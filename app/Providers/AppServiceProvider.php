@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Broadcasting\BroadcastManager;
+use App\Broadcasting\SocketIoBroadcaster;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use App\Models\Organisation;

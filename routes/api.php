@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrganisationController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubCategoryController;
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\ChatController;
 
 
 /*
@@ -38,6 +39,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasks/nearby', [TaskController::class, 'nearTasks']);
     Route::post('/tasks/accept/{id}', [TaskController::class, 'acceptTask']);
     Route::get('/tasks/accepted', [TaskController::class, 'acceptedTasks']);
+
+    // Chat routes
+    Route::post('/conversation', [ChatController::class, 'createOrGetConversation']);
+    Route::get('/conversations', [ChatController::class, 'getMyConversations']);
+    Route::get('/messages/{conversation_id}', [ChatController::class, 'getMessages']);
+    Route::post('/message', [ChatController::class, 'sendMessage']);
+    Route::post('/message/{id}/seen', [ChatController::class, 'markSeen']);
 });
 
 Route::get('/organisation', [OrganisationController::class, 'index']);

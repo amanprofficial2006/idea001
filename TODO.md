@@ -1,19 +1,42 @@
-# TODO: Fix Duplicate Firebase Notifications
+# Chat System Implementation TODO
 
-## Completed Tasks
+## Database
 
-- [x] Added onMessage import to firebase.js
-- [x] Implemented onMessage listener that logs foreground messages without showing duplicate notifications
-- [x] Verified backend sends notification payload correctly via sendMulticast
+- [x] Create conversations table migration
+- [x] Create messages table migration
+- [x] Run migrations
 
-## Summary
+## Models
 
-Fixed duplicate notifications by removing manual notification display in foreground onMessage listener. Now:
+- [x] Create Conversation model with relationships
+- [x] Create Message model with relationships
 
-- Background: Service worker shows notification
-- Foreground: Only logs the message (no duplicate notification)
+## Controllers
 
-## Next Steps
+- [x] Create ChatController
+- [x] Implement createOrGetConversation method
+- [x] Implement getMyConversations method
+- [x] Implement getMessages method
+- [x] Implement sendMessage method
+- [x] Implement markSeen method
 
-- Test the notification behavior in both background and foreground states
-- Ensure service worker is properly registered for background notifications
+## Routes
+
+- [x] Add chat routes to api.php
+
+## Broadcasting
+
+- [x] Create MessageSent event
+- [x] Configure broadcasting for socket.io
+- [x] Fire MessageSent event in sendMessage method
+
+## Testing
+
+- [ ] Test all APIs
+- [ ] Test socket integration
+
+## Notes
+
+- Socket room logic: room = "chat\_" + conversation_id
+- Only 2 users join the same room
+- Use the provided socket.io configuration
