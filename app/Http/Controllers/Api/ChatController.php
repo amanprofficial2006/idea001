@@ -147,17 +147,14 @@ class ChatController extends Controller
             'message'         => $request->message,
         ]);
 
-        // ✅ CORRECT SOCKET EMIT
+        // ✅ LARAVEL → NODE → SOCKET
         try {
             Http::timeout(3)->post('https://socket.bitmaxgroup.com/emit-message', [
-                'room'  => 'chat_' . $conversation->id,
-                'event' => 'receiveMessage',
-                'data'  => $message,
+                'room'    => 'chat_' . $conversation->id,
+                'message' => $message,
             ]);
         } catch (\Throwable $e) {
-            Log::error('Socket emit failed', [
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('Socket emit failed', ['error' => $e->getMessage()]);
         }
 
         return response()->json($message);
