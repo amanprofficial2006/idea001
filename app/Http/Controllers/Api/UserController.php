@@ -148,8 +148,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'phone'    => 'required|string|exists:users,phone',
             'password' => 'required|string',
-            'device_type'  => 'required|string|in:android,ios,web',
-            'device_token' => 'required|string',
+            // 'device_type'  => 'required|string|in:android,ios,web',
+            // 'device_token' => 'required|string',
         ]);
 
         if ($validator->fails()) {
