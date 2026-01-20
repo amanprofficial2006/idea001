@@ -28,7 +28,8 @@
 
 - [x] Create MessageSent event
 - [x] Configure broadcasting for socket.io
-- [x] Fire MessageSent event in sendMessage method
+- [ ] Update MessageSent event broadcast channel to 'chat.{conversation_id}'
+- [ ] Fire MessageSent event in sendMessage method
 
 ## Testing
 
