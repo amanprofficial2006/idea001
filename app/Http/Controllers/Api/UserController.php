@@ -96,8 +96,8 @@ class UserController extends Controller
                 $title = "New User Registered | {$siteName}";
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
 
-                $message = CloudMessage::new();
-
+                $message = CloudMessage::new()
+                    ->withNotification(Notification::create($title, $body));
 
                 // 🔥 Send to ALL ADMINS
                 $messaging->sendMulticast($message, $adminTokens);
