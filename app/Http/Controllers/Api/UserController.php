@@ -97,29 +97,9 @@ class UserController extends Controller
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
 
                 $message = CloudMessage::new()
-                    ->withWebPushConfig(
-                        WebPushConfig::fromArray([
-                            'headers' => [
-                                'Urgency' => 'high',
-                            ],
-                            'notification' => [
-                                'title' => $title,
-                                'body'  => $body,
-                                'icon'  => $siteLogo,
-                                'badge' => $siteLogo,
-                            ],
-                            'fcm_options' => [
-                                'link' => url('/admin/dashboard'),
-                            ],
-                            'data' => [
-                                'type' => 'new_user',
-                                'user_id' => (string) $user->id,
-                                'user_name' => $user->name,
-                            ],
-                        ])
+                    ->withNotification(
+                        Notification::create($title, $body)
                     );
-
-
                 // 🔥 Send to ALL ADMINS
                 $messaging->sendMulticast($message, $adminTokens);
             }
