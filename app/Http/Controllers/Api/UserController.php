@@ -97,7 +97,13 @@ class UserController extends Controller
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
 
                 $message = CloudMessage::new()
-                    ->withNotification(Notification::create($title, $body));
+                    ->withData([
+                        'title' => $title,
+                        'body'  => $body,
+                        'icon'  => $siteLogo,
+                        'link'  => url('/admin/dashboard'),
+                    ]);
+
 
                 Log::info('FCM SEND CALLED', [
                     'time' => now()->toDateTimeString(),
