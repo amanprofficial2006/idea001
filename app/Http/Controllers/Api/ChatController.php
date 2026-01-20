@@ -147,14 +147,14 @@ class ChatController extends Controller
             'message'         => $request->message,
         ]);
 
-        // 🔥 REALTIME: Laravel → Socket.IO VPS
+        // ✅ CORRECT SOCKET EMIT
         try {
-            Http::post('https://socket.bitmaxgroup.com:3000', [
-                'event' => 'SignalingMessageBroadcast',
-                'message' => $message,
+            Http::timeout(3)->post('https://socket.bitmaxgroup.com/emit-message', [
+                'room'  => 'chat_' . $conversation->id,
+                'event' => 'receiveMessage',
+                'data'  => $message,
             ]);
         } catch (\Throwable $e) {
-            // socket failure should NEVER break chat
             Log::error('Socket emit failed', [
                 'error' => $e->getMessage(),
             ]);
@@ -162,6 +162,7 @@ class ChatController extends Controller
 
         return response()->json($message);
     }
+
 
     /**
      * Mark message as seen
