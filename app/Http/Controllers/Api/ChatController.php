@@ -149,10 +149,9 @@ class ChatController extends Controller
 
         // 🔥 REALTIME: Laravel → Socket.IO VPS
         try {
-            Http::timeout(3)->post('https://socket.bitmaxgroup.com/emit-message', [
-                'room'  => 'chat_' . $conversation->id,
-                'event' => 'receiveMessage',
-                'data'  => $message,
+            Http::post('https://socket.bitmaxgroup.com:3000', [
+                'event' => 'SignalingMessageBroadcast',
+                'message' => $message,
             ]);
         } catch (\Throwable $e) {
             // socket failure should NEVER break chat
