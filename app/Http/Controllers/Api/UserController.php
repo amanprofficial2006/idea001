@@ -99,11 +99,42 @@ class UserController extends Controller
                 $message = CloudMessage::new()
                     ->withNotification(Notification::create($title, $body));
 
+                Log::info('FCM SEND CALLED', [
+                    'time' => now()->toDateTimeString(),
+                    'user_id' => $user->id,
+                ]);
                 // 🔥 Send to ALL ADMINS
                 $messaging->sendMulticast($message, $adminTokens);
             }
         } catch (\Throwable $e) {
             Log::error('Admin notification failed', [
+                'error'   => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+        }
+
+        /* =========================
+       USER WELCOME NOTIFICATION
+       ========================= */
+        try {
+            if ($user->device_token) {
+                $factory = (new Factory)
+                    ->withServiceAccount(base_path(config('services.firebase.credentials')))
+                    ->withProjectId(config('services.firebase.project_id'));
+
+                $messaging = $factory->createMessaging();
+
+                $title = "Welcome to {$siteName}!";
+                $body  = "Hi {$user->name}, your account has been created successfully. Start exploring and helping others!";
+
+                $message = CloudMessage::new()
+                    ->withNotification(Notification::create($title, $body))
+                    ->withToken($user->device_token);
+
+                $messaging->send($message);
+            }
+        } catch (\Throwable $e) {
+            Log::error('User welcome notification failed', [
                 'error'   => $e->getMessage(),
                 'user_id' => $user->id,
             ]);
