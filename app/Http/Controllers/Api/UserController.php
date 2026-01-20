@@ -97,12 +97,20 @@ class UserController extends Controller
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
 
                 $message = CloudMessage::new()
-                    ->withData([
-                        'title' => $title,
-                        'body'  => $body,
-                        'icon'  => $siteLogo,
-                        'link'  => url('/admin/dashboard'),
-                    ]);
+                    ->withWebPushConfig(
+                        WebPushConfig::fromArray([
+                            'notification' => [
+                                'title' => $title,
+                                'body'  => $body,
+                                'icon'  => $siteLogo,
+                                'badge' => $siteLogo,
+                            ],
+                            'fcm_options' => [
+                                'link' => url('/admin/dashboard'),
+                            ],
+                        ])
+                    );
+
 
 
                 Log::info('FCM SEND CALLED', [
