@@ -132,32 +132,41 @@ class ChatController extends Controller
             'message'         => 'required|string',
         ]);
 
-        $me = Auth::id();
+        $me = Auth::user();
 
         $conversation = Conversation::where('id', $request->conversation_id)
             ->where(function ($q) use ($me) {
-                $q->where('user_one_id', $me)
-                    ->orWhere('user_two_id', $me);
+                $q->where('user_one_id', $me->id)
+                    ->orWhere('user_two_id', $me->id);
             })
             ->firstOrFail();
 
         $message = Message::create([
             'conversation_id' => $conversation->id,
-            'sender_id'       => $me,
+            'sender_id'       => $me->id,
             'message'         => $request->message,
         ]);
 
-        // ✅ LARAVEL → NODE → SOCKET
+        // 🔥 VERY IMPORTANT PAYLOAD
+        $payload = [
+            'id'              => $message->id,
+            'conversation_id' => $conversation->id,
+            'message'         => $message->message,
+            'sender_id'       => $me->id,
+            'sender_uid'      => $me->user_uid,   // ✅ THIS WAS MISSING
+            'created_at'      => $message->created_at,
+        ];
+
         try {
             Http::timeout(3)->post('https://socket.bitmaxgroup.com/emit-message', [
                 'room'    => 'chat_' . $conversation->id,
-                'message' => $message,
+                'message' => $payload,
             ]);
         } catch (\Throwable $e) {
             Log::error('Socket emit failed', ['error' => $e->getMessage()]);
         }
 
-        return response()->json($message);
+        return response()->json($payload);
     }
 
 
