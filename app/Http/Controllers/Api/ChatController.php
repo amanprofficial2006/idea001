@@ -2,51 +2,63 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
+
 
 class ChatController extends Controller
 {
     /**
      * Create or get conversation (2-user only)
      */
+
+
     public function createOrGetConversation(Request $request)
     {
         $request->validate([
-            'receiver_id' => 'required|exists:users,id',
+            'receiver_uid' => 'required|exists:users,user_uid',
         ]);
 
-        $me = Auth::id();
-        $other = $request->receiver_id;
-
-        // prevent self-chat
-        if ($me == $other) {
-            return response()->json(['error' => 'Invalid receiver'], 422);
+        $me = Auth::user();
+        if (!$me) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
-        $conversation = Conversation::where(function ($q) use ($me, $other) {
-            $q->where('user_one_id', $me)
-                ->where('user_two_id', $other);
-        })->orWhere(function ($q) use ($me, $other) {
-            $q->where('user_one_id', $other)
-                ->where('user_two_id', $me);
+        $receiver = User::where('user_uid', $request->receiver_uid)->firstOrFail();
+
+        if ($me->id === $receiver->id) {
+            return response()->json(['error' => 'Cannot chat with self'], 422);
+        }
+
+        $conversation = Conversation::where(function ($q) use ($me, $receiver) {
+            $q->where('user_one_id', $me->id)
+                ->where('user_two_id', $receiver->id);
+        })->orWhere(function ($q) use ($me, $receiver) {
+            $q->where('user_one_id', $receiver->id)
+                ->where('user_two_id', $me->id);
         })->first();
 
         if (!$conversation) {
             $conversation = Conversation::create([
-                'user_one_id' => $me,
-                'user_two_id' => $other,
+                'user_one_id' => $me->id,
+                'user_two_id' => $receiver->id,
             ]);
         }
 
-        return response()->json($conversation);
+        return response()->json([
+            'conversation_id' => $conversation->id,
+            'me_uid'          => $me->user_uid,
+            'receiver_uid'    => $receiver->user_uid,
+        ]);
     }
+
 
     /**
      * Get my conversations list
