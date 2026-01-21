@@ -115,9 +115,20 @@ class ChatController extends Controller
             ->firstOrFail();
 
         $messages = $conversation->messages()
-            ->with('sender:id,name')
+            ->with('sender:id,name,user_uid')
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id'              => $m->id,
+                    'conversation_id' => $m->conversation_id,
+                    'message'         => $m->message,
+                    'sender_id'       => $m->sender_id,
+                    'sender_uid'      => $m->sender->user_uid, // 🔥 REQUIRED
+                    'seen'            => $m->seen,
+                    'created_at'      => $m->created_at,
+                ];
+            });
 
         return response()->json($messages);
     }
