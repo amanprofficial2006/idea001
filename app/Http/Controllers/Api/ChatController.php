@@ -188,20 +188,19 @@ class ChatController extends Controller
     /**
      * Mark message as seen
      */
-    public function markSeen($messageId)
+    public function markSeen($id)
     {
-        $me = Auth::id();
+        $message = Message::findOrFail($id);
+        $message->seen = true;
+        $message->save();
 
-        $message = Message::where('id', $messageId)
-            ->where('sender_id', '!=', $me)
-            ->whereHas('conversation', function ($q) use ($me) {
-                $q->where('user_one_id', $me)
-                    ->orWhere('user_two_id', $me);
-            })
-            ->firstOrFail();
+        // 🔥 Emit to socket server
+        Http::post('https://socket.bitmaxgroup.com/emit-message-seen', [
+            'conversation_id' => $message->conversation_id,
+            'message_id' => $message->id,
+            'receiver_uid' => $message->sender_uid,
+        ]);
 
-        $message->update(['seen' => 1]);
-
-        return response()->json(['status' => 'seen']);
+        return response()->json(['success' => true]);
     }
 }
