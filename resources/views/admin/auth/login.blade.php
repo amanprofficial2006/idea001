@@ -80,16 +80,9 @@
 	</div>
 
 	{{-- Firebase JS for device token --}}
-	<script type="module">
-		// Import the functions you need from the SDKs you need
-		import {
-			initializeApp
-		} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-		import {
-			getMessaging,
-			getToken
-		} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-messaging.js";
-
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+	<script>
 		// Your web app's Firebase configuration
 		const firebaseConfig = {
 			apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
@@ -102,12 +95,12 @@
 		};
 
 		// Initialize Firebase
-		const app = initializeApp(firebaseConfig);
-		const messaging = getMessaging(app);
+		firebase.initializeApp(firebaseConfig);
+		const messaging = firebase.messaging();
 
 		async function getDeviceToken() {
 			try {
-				const token = await getToken(messaging, {
+				const token = await messaging.getToken({
 					vapidKey: 'BIWhgwdKKixoudiW4sKuSMi_eMpE1r4JxQpePCraP2i8O6XiEJbkkoL_CtSio5J4omUl8_pFliP2l2vN4qR9U-U'
 				});
 				return token;
