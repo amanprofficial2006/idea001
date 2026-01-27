@@ -24,6 +24,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'receiver_uid' => 'required|exists:users,user_uid',
+            'task_id' => 'required|exists:tasks,id',
         ]);
 
         $me = Auth::user();
@@ -37,18 +38,21 @@ class ChatController extends Controller
             return response()->json(['error' => 'Cannot chat with self'], 422);
         }
 
-        $conversation = Conversation::where(function ($q) use ($me, $receiver) {
+        $conversation = Conversation::where(function ($q) use ($me, $receiver, $request) {
             $q->where('user_one_id', $me->id)
-                ->where('user_two_id', $receiver->id);
-        })->orWhere(function ($q) use ($me, $receiver) {
+                ->where('user_two_id', $receiver->id)
+                ->where('task_id', $request->task_id);
+        })->orWhere(function ($q) use ($me, $receiver, $request) {
             $q->where('user_one_id', $receiver->id)
-                ->where('user_two_id', $me->id);
+                ->where('user_two_id', $me->id)
+                ->where('task_id', $request->task_id);
         })->first();
 
         if (!$conversation) {
             $conversation = Conversation::create([
                 'user_one_id' => $me->id,
                 'user_two_id' => $receiver->id,
+                'task_id' => $request->task_id,
             ]);
         }
 
@@ -56,9 +60,9 @@ class ChatController extends Controller
             'conversation_id' => $conversation->id,
             'me_uid'          => $me->user_uid,
             'receiver_uid'    => $receiver->user_uid,
+            'task_id'         => $conversation->task_id,
         ]);
     }
-
 
     /**
      * Get my conversations list

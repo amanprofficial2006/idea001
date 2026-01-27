@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conversation extends Model
 {
-    protected $fillable = ['user_one_id', 'user_two_id'];
+    protected $fillable = ['user_one_id', 'user_two_id', 'task_id'];
 
     public function userOne(): BelongsTo
     {
@@ -23,6 +23,11 @@ class Conversation extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 
     public function getOtherUser($userId)
