@@ -1,56 +1,55 @@
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js");
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
-    authDomain: "dohelp-7d140.firebaseapp.com",
-    projectId: "dohelp-7d140",
-    storageBucket: "dohelp-7d140.firebasestorage.app",
-    messagingSenderId: "228064919901",
-    appId: "1:228064919901:web:b6d1f42822b129419ea8b4",
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = firebase.messaging();
-
-// Handle background messages
-messaging.onBackgroundMessage((payload) => {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/favicon.ico', // You can customize this
-        badge: '/favicon.ico', // You can customize this
-        data: payload.data
-    };
-
-    self.registration.showNotification(notificationTitle, notificationOptions);
+firebase.initializeApp({
+  apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
+  authDomain: "dohelp-7d140.firebaseapp.com",
+  projectId: "dohelp-7d140",
+  messagingSenderId: "228064919901",
+  appId: "1:228064919901:web:b6d1f42822b129419ea8b4"
 });
 
-// Handle notification click
-self.addEventListener('notificationclick', (event) => {
-    console.log('[firebase-messaging-sw.js] Notification click received.');
+const messaging = firebase.messaging();
 
-    event.notification.close();
+/**
+ * 🔥 THIS IS THE MISSING PART
+ * Background notification handler
+ */
+messaging.onBackgroundMessage(function(payload) {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
-    // This looks to see if the current is already open and focuses if it is
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-            // Check if there is already a window/tab open with the target URL
-            for (let client of windowClients) {
-                if (client.url === '/' && 'focus' in client) {
-                    return client.focus();
-                }
-            }
-            // If not, open a new window/tab with the target URL
-            if (clients.openWindow) {
-                return clients.openWindow('/');
-            }
-        })
-    );
+  const notificationTitle =
+    payload.notification?.title || 'New Notification';
+
+  const notificationOptions = {
+    body: payload.notification?.body || '',
+    icon: payload.notification?.icon || '/favicon.ico',
+    data: {
+      url: payload.fcmOptions?.link || '/'
+    }
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+/**
+ * 🔥 Handle notification click
+ */
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url === urlToOpen && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
 });
