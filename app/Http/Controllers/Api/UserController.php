@@ -95,8 +95,11 @@ class UserController extends Controller
 
                 $title = "New User Registered | {$siteName}";
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
-
                 $message = CloudMessage::new()
+                    ->withData([
+                        'type' => 'new_user',
+                        'user_id' => (string) $user->id,
+                    ])
                     ->withWebPushConfig(
                         WebPushConfig::fromArray([
                             'notification' => [
@@ -110,6 +113,7 @@ class UserController extends Controller
                             ],
                         ])
                     );
+
 
 
 
