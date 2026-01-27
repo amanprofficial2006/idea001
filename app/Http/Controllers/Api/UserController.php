@@ -88,18 +88,15 @@ class UserController extends Controller
 
             if (!empty($adminTokens)) {
                 $factory = (new Factory)
-                    ->withServiceAccount(storage_path('app/firebase/service-account.json'))
-                    ->withProjectId('dohelp-7d140');
+                    ->withServiceAccount(base_path(config('services.firebase.credentials')))
+                    ->withProjectId(config('services.firebase.project_id'));
 
                 $messaging = $factory->createMessaging();
 
                 $title = "New User Registered | {$siteName}";
                 $body  = "{$user->name} ({$user->phone}) joined {$siteName}";
+
                 $message = CloudMessage::new()
-                    ->withData([
-                        'type' => 'new_user',
-                        'user_id' => (string) $user->id,
-                    ])
                     ->withWebPushConfig(
                         WebPushConfig::fromArray([
                             'notification' => [
@@ -113,7 +110,6 @@ class UserController extends Controller
                             ],
                         ])
                     );
-
 
 
 
