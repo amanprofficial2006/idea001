@@ -55,6 +55,23 @@
 		// Make messaging available globally
 		window.firebaseMessaging = messaging;
 	</script>
+
+	<script>
+		const messaging = firebase.messaging();
+
+		messaging.onMessage(function(payload) {
+			console.log("Foreground message:", payload);
+
+			// 🔥 MANUAL notification
+			if (Notification.permission === "granted") {
+				new Notification(payload.notification.title, {
+					body: payload.notification.body,
+					icon: payload.notification.icon || "/favicon.ico",
+				});
+			}
+		});
+	</script>
+
 </head>
 
 <body class="min-h-screen bg-gray-100">
