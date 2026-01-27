@@ -88,8 +88,8 @@ class UserController extends Controller
 
             if (!empty($adminTokens)) {
                 $factory = (new Factory)
-                    ->withServiceAccount(base_path(config('services.firebase.credentials')))
-                    ->withProjectId(config('services.firebase.project_id'));
+                    ->withServiceAccount(storage_path('app/firebase/service-account.json'))
+                    ->withProjectId('dohelp-7d140');
 
                 $messaging = $factory->createMessaging();
 
