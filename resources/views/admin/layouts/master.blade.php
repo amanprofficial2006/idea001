@@ -15,6 +15,46 @@
 
 	{{-- Tailwind CDN --}}
 	<script src="https://cdn.tailwindcss.com"></script>
+
+	{{-- Firebase SDK --}}
+	<script type="module">
+		import {
+			initializeApp
+		} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+		import {
+			getMessaging,
+			getToken,
+			onMessage
+		} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js';
+
+		// Your web app's Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyBpyCu8DzHm-sEV8vQWeOpvELMKwEeaBAI",
+			authDomain: "dohelp-7d140.firebaseapp.com",
+			projectId: "dohelp-7d140",
+			storageBucket: "dohelp-7d140.firebasestorage.app",
+			messagingSenderId: "228064919901",
+			appId: "1:228064919901:web:b6d1f42822b129419ea8b4",
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const messaging = getMessaging(app);
+
+		// Register service worker
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/firebase-messaging-sw.js')
+				.then((registration) => {
+					console.log('Service Worker registered successfully:', registration);
+				})
+				.catch((error) => {
+					console.log('Service Worker registration failed:', error);
+				});
+		}
+
+		// Make messaging available globally
+		window.firebaseMessaging = messaging;
+	</script>
 </head>
 
 <body class="min-h-screen bg-gray-100">
